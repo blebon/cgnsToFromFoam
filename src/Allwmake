@@ -2,13 +2,6 @@
 set -x
 
 #
-# Compile libOpenFoamTurbo
-#
-wmake libso OpenFoamTurbo
-
-wmake libso turboPerformance
-
-#
 # Compile cgnslib
 #
 CGNSLIBHOME=`pwd`/cgnslib_2.5

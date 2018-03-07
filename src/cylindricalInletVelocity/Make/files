@@ -1,3 +1,0 @@
-cylindricalInletVelocityFvPatchVectorField.C
-
-LIB = $(FOAM_USER_LIBBIN)/libcylindricalInletVelocity

@@ -1,4 +1,0 @@
-
-rotatingSplitVelocityFvPatchVectorField.C
-
-LIB = $(FOAM_USER_LIBBIN)/librotatingSplitVelocity
