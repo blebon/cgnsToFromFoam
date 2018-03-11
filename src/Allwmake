@@ -19,8 +19,11 @@ then
 
     # Verify the bootstrap script against your own installation of the autotools
     ./bootstrap
-    ./configure --prefix=$LIBCGNSOOHOME/platforms/$WM_OPTIONS --with-CGNSLIBHOME=/usr/
-    make
+    ./configure --prefix=$LIBCGNSOOHOME/platforms/$WM_OPTIONS --with-CGNSLIBHOME=/usr
+
+    CORES=${WM_NCOMPPROCS:-1}
+
+    make -j $CORES
     make install
 
     popd

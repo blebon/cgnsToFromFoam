@@ -64,6 +64,62 @@ namespace CGNSOO
 #define RealSingle CG_RealSingle
 #define RealDouble CG_RealDouble
 #define Integer CG_Integer
+
+#define MODE_READ CG_MODE_READ
+#define MODE_WRITE CG_MODE_WRITE
+#define MODE_MODIFY CG_MODE_MODIFY
+
+#define Kilogram CG_Kilogram
+#define Meter CG_Meter
+#define Second CG_Second
+#define Kelvin CG_Kelvin
+#define Degree CG_Degree
+#define Character CG_Character
+
+#define DataTypeUserDefined CG_DataTypeUserDefined
+#define MIXED CG_MIXED
+
+
+#define BAR_2 CG_BAR_2
+#define BAR_3 CG_BAR_3
+#define BCTypeNull CG_BCTypeNull
+#define ElementTypeNull CG_ElementTypeNull
+#define ElementTypeUserDefined CG_ElementTypeUserDefined
+#define HEXA_20 CG_HEXA_20
+#define HEXA_27 CG_HEXA_27
+#define HEXA_8 CG_HEXA_8
+#define NGON_n CG_NGON_n
+#define NODE CG_NODE
+#define PENTA_15 CG_PENTA_15
+#define PENTA_18 CG_PENTA_18
+#define PENTA_6 CG_PENTA_6
+#define PYRA_14 CG_PYRA_14
+#define PYRA_5 CG_PYRA_5
+#define QUAD_4 CG_QUAD_4
+#define QUAD_8 CG_QUAD_8
+#define QUAD_9 CG_QUAD_9
+#define TETRA_10 CG_TETRA_10
+#define TETRA_4 CG_TETRA_4
+#define TRI_3 CG_TRI_3
+#define TRI_6 CG_TRI_6
+
+#define BCAxisymmetricWedge CG_BCAxisymmetricWedge
+#define BCInflow CG_BCInflow
+#define BCOutflow CG_BCOutflow
+#define BCSymmetryPlane CG_BCSymmetryPlane
+#define BCTypeUserDefined CG_BCTypeUserDefined
+#define BCWall CG_BCWall
+#define CellCenter CG_CellCenter
+#define EdgeCenter CG_EdgeCenter
+#define FaceCenter CG_FaceCenter
+#define FamilySpecified CG_FamilySpecified
+#define GridLocationNull CG_GridLocationNull
+#define GridLocationUserDefined CG_GridLocationUserDefined
+#define IFaceCenter CG_IFaceCenter
+#define JFaceCenter CG_JFaceCenter
+#define KFaceCenter CG_KFaceCenter
+#define UserDefined CG_UserDefined
+#define Vertex CG_Vertex
 #endif
 
 typedef char cgnsstring[33]; //!< Representation of a text label in CGNS
