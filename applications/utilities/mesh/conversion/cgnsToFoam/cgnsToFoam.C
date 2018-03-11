@@ -98,13 +98,13 @@ list< pair<std::string,std::string> >& namepairs )
     char* psep = std::strtok( str, separators );
     while (psep != NULL)
     {
-	tokens[itok++] = psep;
-	if ( itok==2 )
-	{
+        tokens[itok++] = psep;
+        if ( itok==2 )
+        {
             itok = 0; // reset
             //Foam::Info << "parseMatchingCyclicBcNames: new BC pair: " << tokens[0] << " - " << tokens[1] << Foam::endl;
             namepairs.push_back( pair<std::string,std::string>(tokens[0],tokens[1]) );
-	}
+        }
         psep = std::strtok( NULL, separators );
     }
     delete str;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     Foam::argList::validOptions.insert("noMeshValidation", "");
     Foam::argList::validOptions.insert("saveSolutions", "");
     Foam::argList::validOptions.insert("separatePatches", "");
-    Foam::argList::validOptions.insert("cfxCompatibility", "");    
+    Foam::argList::validOptions.insert("cfxCompatibility", "");
     Foam::argList::validOptions.insert("use2DElementsAsPatches", "");
     Foam::argList::validOptions.insert("matchCyclicBC", "bc1_name:bc2_name");
     Foam::argList::validOptions.insert("cyclicRotX", "value");
@@ -148,52 +148,52 @@ int main(int argc, char *argv[])
     bool separatePatches = false;
     if ( args.options().found("separatePatches") )
     {
-    	separatePatches = true;
+            separatePatches = true;
     }
-    
+
     bool cfxCompatibilityMode = false;
     if ( args.options().found("cfxCompatibility") )
     {
-    	cfxCompatibilityMode = true;
+            cfxCompatibilityMode = true;
     }
-    
+
     bool use2DElementsAsPatches = false;
     if ( args.options().found("use2DElementsAsPatches") )
     {
-    	use2DElementsAsPatches = true;
+            use2DElementsAsPatches = true;
     }
-    
+
     bool debug = false;
     if ( args.options().found("debug") )
     {
-    	debug = true;
+            debug = true;
     }
-    
+
     bool mapUnknown = false;
 #if DEFINED_MAP_UNKNOWN  // Work in progress
     if ( args.options().found("mapUnknown") )
     {
-    	mapUnknown = true;
+            mapUnknown = true;
     }
 #endif
-    
+
     bool dryRun = false;
     if (args.options().found("dryrun"))
     {
         Foam::Warning << "Option -dryrun was used: data will not be saved" << Foam::endl;
-	dryRun = true;
+        dryRun = true;
     }
-   
+
     Foam::scalar mergeTolerance = 0.1;
     if ( args.options().found("mergeTolerance") )
     {
-    	mergeTolerance = Foam::readScalar(Foam::IStringStream(args.options()["mergeTolerance"])());;
-	Foam::Info << "MergeTolerance set to " << mergeTolerance << Foam::endl;
+            mergeTolerance = Foam::readScalar(Foam::IStringStream(args.options()["mergeTolerance"])());;
+        Foam::Info << "MergeTolerance set to " << mergeTolerance << Foam::endl;
     }
-    
+
     if( args.options().found("rho") && !args.options().found("saveSolutions") )
     {
-	Foam::Warning << "Option -rho is useless since no solution will be saved (no -saveSolutions option)" 
+        Foam::Warning << "Option -rho is useless since no solution will be saved (no -saveSolutions option)" 
             << Foam::endl;
     }
 
@@ -229,9 +229,9 @@ int main(int argc, char *argv[])
 
     std::string cgnsFilename(args.additionalArgs()[0]);
     if ( debug )
-    	Foam::Info << "Conversion of file " << cgnsFilename << Foam::endl;
+            Foam::Info << "Conversion of file " << cgnsFilename << Foam::endl;
     CGNSOO::file cgnsFile( cgnsFilename, CGNSOO::file::READONLY );
-    
+
     int nbases = cgnsFile.getNbBase();
     if ( nbases == 0 )
     {
@@ -243,14 +243,14 @@ int main(int argc, char *argv[])
         Foam::Warning << "More than one CGNS Base were found in the file." << Foam::endl
             << "Only the first one will be treated." << Foam::endl;
     }
-    
+
     std::string baseName;
     int physicalDim, cellDim;
     CGNSOO::Base_t base = cgnsFile.readBase( 0, baseName, physicalDim, cellDim );
     int nbZones = base.getNbZone();
     if ( debug )
-    	Foam::Info << "Mesh: total number of zones: " << nbZones << Foam::endl;
-    
+            Foam::Info << "Mesh: total number of zones: " << nbZones << Foam::endl;
+
     //--------------------------------------------------------------------------
     // Load family definitions into a map indexed by family name
     // We are only interested in family with BCs to resolve
@@ -260,77 +260,89 @@ int main(int argc, char *argv[])
     map<std::string, CGNSOO::BCType_t> fammap;
     for ( int ifam=0 ; ifam<nfamilies ; ifam++ )
     {
-    	std::string famname;
-	int ngeoref; // unused
-	bool hasfbc;
+            std::string famname;
+        int ngeoref; // unused
+        bool hasfbc;
         CGNSOO::Family_t fam = base.readFamily( ifam, famname, hasfbc, ngeoref );
-	if ( hasfbc )
-	{
+        if ( hasfbc )
+        {
             std::string fambcname; // not useful
             CGNSOO::BCType_t bctype;
             fam.readFamilyBC( fambcname, bctype );
             fammap[famname] = bctype;
-	}
+        }
     }
-    
+
     //--------------------------------------------------------------------------
     // Build a local to global node map table
     // Extract node coordinates
     //--------------------------------------------------------------------------
     ConnectivityMapper mapper;
-        
+
     for( int indexZone=0 ; indexZone<nbZones ; indexZone++ )
     {
         // Zone
-	std::string zonename;
+        std::string zonename;
         std::vector<int> nodesize, cellsize, bndrysize;
-	CGNSOO::ZoneType_t zonetype;
-	CGNSOO::Zone_t zone = base.readZone( indexZone, 
-        zonename, 
-        nodesize, cellsize, bndrysize, 
-        zonetype );
-						
+        CGNSOO::ZoneType_t zonetype;
+        CGNSOO::Zone_t zone = base.readZone
+        (
+            indexZone,
+            zonename,
+            nodesize,
+            cellsize,
+            bndrysize,
+            zonetype
+        );
+
         // Read the mesh nodes
         std::vector<double> xCoordinates;
         std::vector<double> yCoordinates;
         std::vector<double> zCoordinates;
 
-	int nbgrids = zone.getNbGridCoordinates();
-	if ( nbgrids != 1 )
-	{
+        int nbgrids = zone.getNbGridCoordinates();
+        if ( nbgrids != 1 )
+        {
             Foam::Warning << "CGNS file with more than one GridCoordinates"
                 << " - only the first grid will be read"
                 << Foam::endl;
-	}
-	
-	// What type of coordinate system do we have?
-	std::string coordName;
+        }
+
+        // What type of coordinate system do we have?
+        std::string coordName;
         CGNSOO::GridCoordinates_t gridcoo = zone.readGridCoordinates( 0, coordName );
-	int nbcoords = gridcoo.getNbCoordinatesData();
-	
-	std::map<std::string,int> coomap;
-	for ( int icoo=0 ; icoo<nbcoords ; icoo++ )
-	{
+        int nbcoords = gridcoo.getNbCoordinatesData();
+
+        std::map<std::string,int> coomap;
+        for ( int icoo=0 ; icoo<nbcoords ; icoo++ )
+        {
             std::string     cooname;
             CGNSOO::DataType_t cootype;
             gridcoo.getCoordinatesDataInfo( icoo, cooname, cootype );
             coomap[cooname] = icoo;
-	}
-	if ( nbcoords==3 &&
-        coomap.find("CoordinateX") != coomap.end() &&
-        coomap.find("CoordinateY") != coomap.end() &&
-        coomap.find("CoordinateZ") != coomap.end() )
-	{
+        }
+
+        if
+        (
+            nbcoords==3 &&
+            coomap.find("CoordinateX") != coomap.end() &&
+            coomap.find("CoordinateY") != coomap.end() &&
+            coomap.find("CoordinateZ") != coomap.end()
+        )
+        {
             // Cartesian coordinate system
             CGNSOO::DataArray_t datax = gridcoo.readCoordinatesData( "CoordinateX", xCoordinates );
             CGNSOO::DataArray_t datay = gridcoo.readCoordinatesData( "CoordinateY", yCoordinates );
             CGNSOO::DataArray_t dataz = gridcoo.readCoordinatesData( "CoordinateZ", zCoordinates );
-	}
-	else if ( nbcoords==3 &&
-        coomap.find("CoordinateR") != coomap.end() &&
-        coomap.find("CoordinateZ") != coomap.end() &&
-        coomap.find("CoordinateTheta") != coomap.end() )
-	{
+        }
+        else if
+        (
+            nbcoords==3 &&
+            coomap.find("CoordinateR") != coomap.end() &&
+            coomap.find("CoordinateZ") != coomap.end() &&
+            coomap.find("CoordinateTheta") != coomap.end()
+        )
+        {
             // lire en r,t,z et convertir en x,y,z
             std::vector<double> rCoo, tCoo;
             CGNSOO::DataArray_t datar = gridcoo.readCoordinatesData( "CoordinateR", rCoo );
@@ -342,20 +354,20 @@ int main(int argc, char *argv[])
                 xCoordinates.push_back( rCoo[i]*cos(tCoo[i]) );
                 yCoordinates.push_back( rCoo[i]*sin(tCoo[i]) );
             }
-	}
-	else
-	{
+        }
+        else
+        {
             Foam::FatalError << "Unknown coordinate system ";
             for ( std::map<std::string,int>::const_iterator i  = coomap.begin() ; 
                   i != coomap.end() ; 
                   i++ )
                 Foam::FatalError << " : " << (*i).first;
             Foam::FatalError << Foam::endl << exit(Foam::FatalError);
-	}
+        }
 
-	// Convert the 3 vectors of doubles into a list of points
-	list<Foam::point> plist;
-	int nnodes = xCoordinates.size();
+        // Convert the 3 vectors of doubles into a list of points
+        list<Foam::point> plist;
+        int nnodes = xCoordinates.size();
         for( int i=0 ; i<nnodes ; i++)
         {
             Foam::point pt( xCoordinates[i],
@@ -364,16 +376,16 @@ int main(int argc, char *argv[])
             plist.push_back( pt );
         }
 
-	// Read the connectivity information
-	// and let the merger handle all this mess!!
-	switch ( zonetype )
-	{
+        // Read the connectivity information
+        // and let the merger handle all this mess!!
+        switch ( zonetype )
+        {
             case CGNSOO::Structured:
-		// Connectivity is implicit ... it will be constructured internally
-		mapper.addStructuredZone( nodesize[0],nodesize[1],nodesize[2],plist );
-		break;
+                // Connectivity is implicit ... it will be constructured internally
+                mapper.addStructuredZone( nodesize[0],nodesize[1],nodesize[2],plist );
+                break;
             case CGNSOO::Unstructured:
-		{
+                {
                     // get all the element sections
                     int nbesections = zone.getNbElements();
                     std::vector< std::string        > sectionnames(nbesections);
@@ -381,32 +393,34 @@ int main(int argc, char *argv[])
                     std::vector< CGNSOO::ElementType_t > etypes(nbesections);
                     for ( int ies=0 ; ies<nbesections ; ies++ )
                     {
-			//string sectionname;
-			int    start, end, nbndry;
-			bool   hasparent;
-			CGNSOO::Elements_t esection = zone.readElements( 
+                        //string sectionname;
+                        int    start, end, nbndry;
+                        bool   hasparent;
+                        CGNSOO::Elements_t esection = zone.readElements( 
                             ies, sectionnames[ies], etypes[ies], start, end, nbndry, hasparent );
-			CGNSOO::DataArray_t connecda = esection.readConnectivity( connectivities[ies] );
+                        CGNSOO::DataArray_t connecda = esection.readConnectivity( connectivities[ies] );
                     }
                     mapper.addUnstructuredZone( nodesize[0], cellsize[0], plist,
                     sectionnames, etypes, connectivities );
-		}
-		break;
+                }
+                break;
             default:
-		Foam::FatalError << "Unrecognized zone type"
+                Foam::FatalError << "Unrecognized zone type"
                     << " - only Structured and Unstructured are accepted"
                     << exit(Foam::FatalError);
-		break;
-	}
-    }    
-    
+                break;
+        }
+    }
+
     // Merge identical points at the interfaces
     // Normally, for an unstructured mesh, there should not be any change
     // For a structured one, the points at the boundary must be merged.
     if ( debug )
-    	Foam::Info << "Mesh: total number of nodes before merge: " << mapper.getTotalNodes() << Foam::endl;
+    {
+        Foam::Info << "Mesh: total number of nodes before merge: " << mapper.getTotalNodes() << Foam::endl;
+    }
     mapper.merge( mergeTolerance );
-    
+
     // Validation
     int nCreatedCells = mapper.getTotalCells();
     if ( debug )
@@ -414,7 +428,7 @@ int main(int argc, char *argv[])
         Foam::Info << "Mesh: total number of nodes after merge: " << mapper.getTotalNodes() << Foam::endl;
         Foam::Info << "Mesh: total number of cells after merge: " << nCreatedCells << Foam::endl;
     }
-    
+
     //--------------------------------------------------------------------------
     // Read-in the boundary conditions
     //--------------------------------------------------------------------------
@@ -422,12 +436,12 @@ int main(int argc, char *argv[])
     CGNSBoundaryConditions bc_merger( mapper, fammap, debug );
     if ( use2DElementsAsPatches )
     {
-    	bc_merger.addPatchesFromElements( CGNSOO::BCTypeNull  );
+        bc_merger.addPatchesFromElements( CGNSOO::BCTypeNull  );
     }
     else
     {
-	for( int indexZone=0 ; indexZone<nbZones ; indexZone++ )
-	{
+        for( int indexZone=0 ; indexZone<nbZones ; indexZone++ )
+        {
             std::string zonename;
             std::vector<int> nodesize, cellsize, bndrysize;
             CGNSOO::ZoneType_t zonetype;
@@ -437,20 +451,20 @@ int main(int argc, char *argv[])
             zonetype );
             CGNSOO::ZoneBC_t zonebc = zone.readZoneBC();
             int nbBoco = zonebc.getNbBoundaryConditions();
-		
+
             for( int indexBC=0 ; indexBC < nbBoco ; indexBC++ )
             {
                 std::string         bcname;
                 CGNSOO::BCType_t       bctype;
                 CGNSOO::PointSetType_t psettype;
                 CGNSOO::BC_t bc = zonebc.readBC( indexBC, bcname, bctype, psettype );
-	
+
                 bc_merger.addBoundaryPatch( base, indexZone, zonetype, bc, bcname, bctype, psettype );
             }
-	}
+        }
     }
     bc_merger.buildPatches( separatePatches );
-    
+
     // Lets deal with cyclic BC ....
     if (args.options().found("matchCyclicBC"))
     {
@@ -461,42 +475,42 @@ int main(int argc, char *argv[])
 
         if ( debug )
             Foam::Info << "Processing cyclic boundary conditions" << Foam::endl;
-	
-	// Divide the argument to matchCyclicBC into pairs of names to
-	// be matched one to another
-	std::string argCyclicBC = args.options()["matchCyclicBC"];
-	//std::string s_argCyclicBC = FoamReplaceChar( argCyclicBC, ' ', '_' );
-	std::string s_argCyclicBC = argCyclicBC;
+
+        // Divide the argument to matchCyclicBC into pairs of names to
+        // be matched one to another
+        std::string argCyclicBC = args.options()["matchCyclicBC"];
+        //std::string s_argCyclicBC = FoamReplaceChar( argCyclicBC, ' ', '_' );
+        std::string s_argCyclicBC = argCyclicBC;
         list< pair<std::string,std::string> > l_matchingCyclicBcNames;
-	if ( parseMatchingCyclicBcNames(s_argCyclicBC,l_matchingCyclicBcNames) )
-	{
-	    Foam::FatalError  << "Unmatched bcname for cyclic boundaries"
+        if ( parseMatchingCyclicBcNames(s_argCyclicBC,l_matchingCyclicBcNames) )
+        {
+            Foam::FatalError  << "Unmatched bcname for cyclic boundaries"
                 << " - number of names must be even."
                 << exit(Foam::FatalError);
-	}
+        }
 
         if( l_matchingCyclicBcNames.size() > 0 )
         {
-	    Foam::vector rotAxis(0,0,1);
-	    Foam::scalar rotAngle = 0;
+            Foam::vector rotAxis(0,0,1);
+            Foam::scalar rotAngle = 0;
             if( args.options().found("cyclicRotX") )
-	    {
+            {
                 cyclicRotX = Foam::readScalar(Foam::IStringStream(args.options()["cyclicRotX"])());
-		rotAxis = Foam::vector(1,0,0);
-		rotAngle = cyclicRotX;
-	    }
+                rotAxis = Foam::vector(1,0,0);
+                rotAngle = cyclicRotX;
+            }
             if( args.options().found("cyclicRotY") )
-	    {
+            {
                 cyclicRotY = Foam::readScalar(Foam::IStringStream(args.options()["cyclicRotY"])());
-		rotAxis = Foam::vector(0,1,0);
-		rotAngle = cyclicRotY;
-	    }
+                rotAxis = Foam::vector(0,1,0);
+                rotAngle = cyclicRotY;
+            }
             if( args.options().found("cyclicRotZ") )
-	    {
+            {
                 cyclicRotZ = Foam::readScalar(Foam::IStringStream(args.options()["cyclicRotZ"])());
-		rotAxis = Foam::vector(0,0,1);
-		rotAngle = cyclicRotZ;
-	    }
+                rotAxis = Foam::vector(0,0,1);
+                rotAngle = cyclicRotZ;
+            }
             if( args.options().found("cyclicMatchFaceTolFactor") )
                 cyclicMatchFaceTolFactor = Foam::readScalar(Foam::IStringStream(args.options()["cyclicMatchFaceTolFactor"])());
 
@@ -513,26 +527,26 @@ int main(int argc, char *argv[])
                   p != l_matchingCyclicBcNames.end() ;
                   p++ )
             {
-	    	const std::string& firstPatchName  = p->first;
-		const std::string& secondPatchName = p->second;
-		
-		int retcode = bc_merger.computeCyclicBC( firstPatchName, secondPatchName, rotAxis, rotAngle, cyclicMatchFaceTolFactor );
-		if ( retcode < 0 )
-		{
+                const std::string& firstPatchName  = p->first;
+                const std::string& secondPatchName = p->second;
+
+                int retcode = bc_merger.computeCyclicBC( firstPatchName, secondPatchName, rotAxis, rotAngle, cyclicMatchFaceTolFactor );
+                if ( retcode < 0 )
+                {
                     switch( retcode )
                     {
-			case -1:
+                        case -1:
                             Foam::FatalError << "Option -matchCyclicBC: Unknown BC name: "
                                 << firstPatchName << Foam::endl;
                             break;
-			case -2:
+                        case -2:
                             Foam::FatalError << "Option -matchCyclicBC: Unknown BC name: "  
                                 << secondPatchName << Foam::endl;
                             break;
                     }
                     Foam::FatalError.exit(1);
-		}
-	    }
+                }
+            }
         }
     }
 
@@ -540,8 +554,10 @@ int main(int argc, char *argv[])
     // Output in the OpenFOAM format
     //--------------------------------------------------------------------------
     if ( debug )
-	Foam::Info << "Creation of Foam poly mesh" << Foam::endl;
-	
+    {
+        Foam::Info << "Creation of Foam poly mesh" << Foam::endl;
+    }
+
     Foam::polyMesh* pShapeMesh = bc_merger.buildFoamMesh( runTime );
 
     if (args.options().found("noMeshValidation"))
@@ -553,34 +569,34 @@ int main(int argc, char *argv[])
     {
         if ( debug )
             Foam::Info << "Validation of the mesh" << Foam::endl;
-	pShapeMesh->checkMesh();
+        pShapeMesh->checkMesh();
     }
-    
+
     if (!dryRun)
     {
-    	Foam::Info << "Output of mesh and boundary conditions" << Foam::endl;
-	Foam::IOstream::defaultPrecision(10); // Set the precision of the points data to 10
-	pShapeMesh->write();
+            Foam::Info << "Output of mesh and boundary conditions" << Foam::endl;
+        Foam::IOstream::defaultPrecision(10); // Set the precision of the points data to 10
+        pShapeMesh->write();
     }
-   
+
     // Save CGNS solutions as initial solution? 
     if ( args.options().found("saveSolutions") )
     {
         Foam::fvMesh cell_mesh(*pShapeMesh);
-	
+
         Foam::scalar rho = getRhoValue( args, runTime );
-	
-	CGNSQuantityConverter* qConverter = (cfxCompatibilityMode) 
+
+        CGNSQuantityConverter* qConverter = (cfxCompatibilityMode) 
             ? new CGNSQuantityConverter_CFXcompatibility()
             : new CGNSQuantityConverter();
-	SolutionConverter solConverter( *pShapeMesh, base, *qConverter );
-	solConverter.buildAndWriteFoamFields( mapper, base, rho, runTime, dryRun, mapUnknown);
-	delete qConverter;
+        SolutionConverter solConverter( *pShapeMesh, base, *qConverter );
+        solConverter.buildAndWriteFoamFields( mapper, base, rho, runTime, dryRun, mapUnknown);
+        delete qConverter;
     }
-    
+
     if ( debug )
         Foam::Info << "Please validate Boundary Conditions by running FoamX." << Foam::endl;
-    
+
     return 0;
 }
 
