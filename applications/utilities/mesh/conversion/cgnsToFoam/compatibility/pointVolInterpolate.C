@@ -85,7 +85,7 @@ void Foam::pointVolInterpolation::interpolate
             bm[patchI].type() != emptyFvPatch::typeName
         )
         {
-            vf.boundaryField()[patchI] =
+            vf.boundaryFieldRef()[patchI] =
                 pi[patchI].pointToFaceInterpolate
                 (
                     pf.boundaryField()[patchI].patchInternalField()
