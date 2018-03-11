@@ -5,33 +5,33 @@
     \\  /    A nd           | Copyright Hydro-Quebec - IREQ, 2008
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-  License
-  This file is part of OpenFOAM.
+License
+    This file is a derivative work of OpenFOAM.
 
-  OpenFOAM is free software; you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as published by the
-  Free Software Foundation; either version 2 of the License, or (at your
-  option) any later version.
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-  OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
-  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-  for more details.
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with OpenFOAM; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
   Description
   Conversion of CGNS files into Foam's mesh and fields
 
-Authors 
-  Martin Beaudoin, Hydro-Quebec - IREQ, 2005
-  Robert Magnan,   Hydro-Quebec - IREQ, 2007
+Authors
+    Martin Beaudoin, Hydro-Quebec - IREQ, 2005
+    Robert Magnan,   Hydro-Quebec - IREQ, 2007
+    Bruno Santos, FSD blueCAPE Lda, 2018
 
 \*---------------------------------------------------------------------------*/
 
-// open foam includes
+// OpenFOAM includes
 #include "argList.H"
 #include "error.H"
 #include "Time.H"
@@ -72,9 +72,8 @@ Foam::scalar getRhoValue( const Foam::argList& args, Foam::IOobject& ioobj )
     Foam::scalar rho = 1.0;  // Default value;
 
     // get rho from the command line
-    if( args.options().found("rho") )
+    if( args.optionReadIfPresent("rho", rho) )
     {
-        rho = Foam::readScalar(Foam::IStringStream(args.options()["rho"])());
         Foam::Info << "User specified value for rho = " << rho << Foam::endl;
     }
     //Foam::Info << "Value for rho = " << rho << Foam::endl;
@@ -119,94 +118,145 @@ int main(int argc, char *argv[])
 {
     Foam::argList::noParallel();
     Foam::argList::validArgs.append("CGNS file");
-    Foam::argList::validOptions.insert("dryrun", "");
-    Foam::argList::validOptions.insert("noMeshValidation", "");
-    Foam::argList::validOptions.insert("saveSolutions", "");
-    Foam::argList::validOptions.insert("separatePatches", "");
-    Foam::argList::validOptions.insert("cfxCompatibility", "");
-    Foam::argList::validOptions.insert("use2DElementsAsPatches", "");
-    Foam::argList::validOptions.insert("matchCyclicBC", "bc1_name:bc2_name");
-    Foam::argList::validOptions.insert("cyclicRotX", "value");
-    Foam::argList::validOptions.insert("cyclicRotY", "value");
-    Foam::argList::validOptions.insert("cyclicRotZ", "value");
-    Foam::argList::validOptions.insert("mergeTolerance", "value");
-    Foam::argList::validOptions.insert("cyclicMatchFaceTolFactor", "value");
-    Foam::argList::validOptions.insert("rho", "value");
-    Foam::argList::validOptions.insert("debug", "");
+
+    Foam::argList::addBoolOption
+    (
+        "dryrun",
+        "Just to test if the CGNS mesh makes sense"
+    );
+    Foam::argList::addBoolOption
+    (
+        "noMeshValidation",
+        "Don't check if the mesh is sane"
+    );
+    Foam::argList::addBoolOption
+    (
+        "saveSolutions",
+        "Also import the fields stored inside the CGNS file"
+    );
+    Foam::argList::addBoolOption
+    (
+        "separatePatches",
+        "Use this option if the patches are to be imported"
+    );
+    Foam::argList::addBoolOption
+    (
+        "cfxCompatibility",
+        "Deploy CFX compatibility"
+    );
+    Foam::argList::addBoolOption
+    (
+        "use2DElementsAsPatches",
+        "Use 2D elements as patches"
+    );
+    Foam::argList::addOption
+    (
+        "matchCyclicBC",
+        "bc1_name:bc2_name",
+        "Define path of patches that should be matched as a pair of cyclics"
+    );
+    Foam::argList::addOption
+    (
+        "cyclicRotX",
+        "value",
+        "Cyclic rotation around X axis, in case of cyclic patches"
+    );
+    Foam::argList::addOption
+    (
+        "cyclicRotY",
+        "value",
+        "Cyclic rotation around Y axis, in case of cyclic patches"
+    );
+    Foam::argList::addOption
+    (
+        "cyclicRotZ",
+        "value",
+        "Cyclic rotation around Z axis, in case of cyclic patches"
+    );
+    Foam::argList::addOption
+    (
+        "mergeTolerance",
+        "value",
+        "Point merge tolerance for cyclic patches"
+    );
+    Foam::argList::addOption
+    (
+        "cyclicMatchFaceTolFactor",
+        "value",
+        "Face matching tolerance factor for cyclic patches"
+    );
+    Foam::argList::addOption
+    (
+        "rho",
+        "value",
+        "Constant density field value to be used when converting pressure field"
+    );
+    Foam::argList::addBoolOption
+    (
+        "debug",
+        "For providing additional debugging information"
+    );
 #if DEFINED_MAP_UNKNOWN  // Work in progress
-    Foam::argList::validOptions.insert("mapUnknown", ""); // Disabled for now. Work in progress.
+    Foam::argList::addBoolOption
+    (
+        "mapUnknown",
+        ""
+    );
+    // Disabled for now. Work in progress @ Hydro-Quebec.
 #endif
 
-    Foam::argList args(argc, argv);
+    Foam::argList::addNote
+    (
+        "To specify a rotation angle like 1/13 of 360 degree, you can use the Unix command bc to compute the value with full precision, eg:\n"
+        "            -cyclicRotZ `echo \"360/13\" | bc -l`"
+    );
 
-    // validate arguments
-    if (!args.check())
+    #include "addRegionOption.H"
+    #include "setRootCase.H"
+    #include "createTime.H"
+
+    word regionName = polyMesh::defaultRegion;
+    fileName meshDir;
+
+    if (args.optionReadIfPresent("region", regionName))
     {
-        Foam::FatalError.exit();
+        meshDir = regionName/polyMesh::meshSubDir;
+    }
+    else
+    {
+        meshDir = polyMesh::meshSubDir;
     }
 
-    bool separatePatches = false;
-    if ( args.options().found("separatePatches") )
-    {
-            separatePatches = true;
-    }
-
-    bool cfxCompatibilityMode = false;
-    if ( args.options().found("cfxCompatibility") )
-    {
-            cfxCompatibilityMode = true;
-    }
-
-    bool use2DElementsAsPatches = false;
-    if ( args.options().found("use2DElementsAsPatches") )
-    {
-            use2DElementsAsPatches = true;
-    }
-
-    bool debug = false;
-    if ( args.options().found("debug") )
-    {
-            debug = true;
-    }
+    bool separatePatches = args.optionFound("separatePatches");
+    bool cfxCompatibilityMode = args.optionFound("cfxCompatibility");
+    bool use2DElementsAsPatches = args.optionFound("use2DElementsAsPatches");
+    bool debug = args.optionFound("debug");
 
     bool mapUnknown = false;
 #if DEFINED_MAP_UNKNOWN  // Work in progress
-    if ( args.options().found("mapUnknown") )
-    {
-            mapUnknown = true;
-    }
+    mapUnknown = args.optionFound("mapUnknown");
 #endif
 
-    bool dryRun = false;
-    if (args.options().found("dryrun"))
+    bool dryRun = args.optionFound("dryrun");
+    if (dryRun)
     {
-        Foam::Warning << "Option -dryrun was used: data will not be saved" << Foam::endl;
-        dryRun = true;
-    }
-
-    Foam::scalar mergeTolerance = 0.1;
-    if ( args.options().found("mergeTolerance") )
-    {
-            mergeTolerance = Foam::readScalar(Foam::IStringStream(args.options()["mergeTolerance"])());;
-        Foam::Info << "MergeTolerance set to " << mergeTolerance << Foam::endl;
-    }
-
-    if( args.options().found("rho") && !args.options().found("saveSolutions") )
-    {
-        Foam::Warning << "Option -rho is useless since no solution will be saved (no -saveSolutions option)" 
+        Foam::Warning
+            << "Option -dryrun was used: data will not be saved"
             << Foam::endl;
     }
 
-    if( args.options().found("help") )
+    Foam::scalar mergeTolerance = 0.1;
+    if ( args.optionReadIfPresent("mergeTolerance", mergeTolerance) )
     {
-        args.printUsage();
+        Foam::Info << "MergeTolerance set to " << mergeTolerance << Foam::endl;
+    }
 
-        Foam::Info << Foam::endl;
-        Foam::Info << "  Note: to specify a rotation angle like 1/13 of 360 degree," << Foam::endl;
-        Foam::Info << "        you can use the Unix command bc to compute the value with full precision, eg:" << Foam::endl;
-        Foam::Info << "            -cyclicRotZ `echo \"360/13\" | bc -l`" << Foam::endl;
-        Foam::Info << Foam::endl;
-        exit(0);
+    if( args.optionFound("rho") && !args.optionFound("saveSolutions") )
+    {
+        Foam::Warning
+            << "Option -rho is useless since no solution will be saved (no "
+            << "-saveSolutions option)"
+            << Foam::endl;
     }
 
 #   include "createTime.H"
@@ -466,7 +516,7 @@ int main(int argc, char *argv[])
     bc_merger.buildPatches( separatePatches );
 
     // Lets deal with cyclic BC ....
-    if (args.options().found("matchCyclicBC"))
+    if (args.optionFound("matchCyclicBC"))
     {
         Foam::scalar cyclicRotX = 0;
         Foam::scalar cyclicRotY = 0;
@@ -493,25 +543,25 @@ int main(int argc, char *argv[])
         {
             Foam::vector rotAxis(0,0,1);
             Foam::scalar rotAngle = 0;
-            if( args.options().found("cyclicRotX") )
+            if( args.optionFound("cyclicRotX") )
             {
                 cyclicRotX = Foam::readScalar(Foam::IStringStream(args.options()["cyclicRotX"])());
                 rotAxis = Foam::vector(1,0,0);
                 rotAngle = cyclicRotX;
             }
-            if( args.options().found("cyclicRotY") )
+            if( args.optionFound("cyclicRotY") )
             {
                 cyclicRotY = Foam::readScalar(Foam::IStringStream(args.options()["cyclicRotY"])());
                 rotAxis = Foam::vector(0,1,0);
                 rotAngle = cyclicRotY;
             }
-            if( args.options().found("cyclicRotZ") )
+            if( args.optionFound("cyclicRotZ") )
             {
                 cyclicRotZ = Foam::readScalar(Foam::IStringStream(args.options()["cyclicRotZ"])());
                 rotAxis = Foam::vector(0,0,1);
                 rotAngle = cyclicRotZ;
             }
-            if( args.options().found("cyclicMatchFaceTolFactor") )
+            if( args.optionFound("cyclicMatchFaceTolFactor") )
                 cyclicMatchFaceTolFactor = Foam::readScalar(Foam::IStringStream(args.options()["cyclicMatchFaceTolFactor"])());
 
             // Validation
@@ -560,7 +610,7 @@ int main(int argc, char *argv[])
 
     Foam::polyMesh* pShapeMesh = bc_merger.buildFoamMesh( runTime );
 
-    if (args.options().found("noMeshValidation"))
+    if (args.optionFound("noMeshValidation"))
     {
         if ( debug )
             Foam::Info << "Option -noMeshValidation activated: disabling the mesh validation with checkMesh" << Foam::endl;
@@ -580,7 +630,7 @@ int main(int argc, char *argv[])
     }
 
     // Save CGNS solutions as initial solution? 
-    if ( args.options().found("saveSolutions") )
+    if ( args.optionFound("saveSolutions") )
     {
         Foam::fvMesh cell_mesh(*pShapeMesh);
 
