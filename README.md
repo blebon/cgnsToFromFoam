@@ -51,21 +51,24 @@ Currently there are the following branches:
 Quick usage instructions:
 
   1. Clone the repository:
-  ```
-  git clone https://github.com/wyldckat/cgnsToFromFoam.git
-  ```
+
+     ```
+     git clone https://github.com/wyldckat/cgnsToFromFoam.git
+     ```
 
   2. Checkout the right branch, e.g. for `OF5x`:
-  ```
-  cd FluidStructureInteraction
-  git checkout OF5x
-  ```
+
+     ```
+     cd FluidStructureInteraction
+     git checkout OF5x
+     ```
 
   3. Now build:
-  ```
-  wmake all -j src
-  wmake all -j applications
-  ```
+
+     ```
+     wmake all -j src
+     wmake -j applications/utilities/mesh/conversion/cgnsToFoam
+     ```
 
 
 License
