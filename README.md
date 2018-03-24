@@ -1,25 +1,71 @@
 Description
 ===========
+
 This branch was forked and adapted from svn://svn.code.sf.net/p/openfoam-extend/svn/trunk/Breeder_2.0/OSIG/TurboMachinery/ - via mirror https://github.com/Unofficial-Extend-Project-Mirror/openfoam-extend-Breeder2.0-OSIG-TurboMachinery
 
 That original repository is part of the TurboMachinery SIG, at http://openfoamwiki.net/index.php/Sig_Turbomachinery
 
-
-This is currently an experimental port for OpenFOAM 5.x and it relies on Ubuntu's more recent CGNS and HDF5 libraries. To install those packages, run:
-
-    sudo apt install libhdf5-dev libcgns-dev
-
-
-This branch OF5x is provided at https://github.com/wyldckat/cgnsToFromFoam
-
 All of the non-CGNS related files were removed, given that this repository focuses on porting CGNS to more recent OpenFOAM versions.
+
+For any problems with this fork, please report it here: https://github.com/wyldckat/cgnsToFromFoam/issues
 
 
 Structure
 =========
+
 The folder "applications" contains new applications.
 
 The folder "src" contains new libraries.
+
+
+Requirements
+============
+
+This is currently an experimental port for OpenFOAM 5.x and it relies on more recent CGNS and HDF5 libraries, which usually are provided by your Linux Distribution.
+
+Therefore, beyond the usual requirements which are already needed for building OpenFOAM from source code, you also need to install those libraries, which can be done as follows:
+
+  * To install those packages on Ubuntu 14.04 or newer, run:
+
+    ```
+    sudo apt install libhdf5-dev libcgns-dev
+    ```
+
+
+  * To install those packages on CentOS 7, run:
+
+    ```
+    su -
+    yum install epel-release
+    yum install cgnslib-devel
+    ```
+
+
+Installation and respective git branches
+========================================
+
+Currently there are the following branches:
+
+  * [OF5x](https://github.com/wyldckat/cgnsToFromFoam/tree/OF5x) - This branch will build with OpenFOAM 5.x
+
+Quick usage instructions:
+
+  1. Clone the repository:
+  ```
+  git clone https://github.com/wyldckat/cgnsToFromFoam.git
+  ```
+
+  2. Checkout the right branch, e.g. for `OF5x`:
+  ```
+  cd FluidStructureInteraction
+  git checkout OF5x
+  ```
+
+  3. Now build:
+  ```
+  wmake all -j src
+  wmake all -j applications
+  ```
 
 
 License
