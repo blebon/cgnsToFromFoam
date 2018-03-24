@@ -32,12 +32,13 @@ Therefore, beyond the usual requirements which are already needed for building O
     ```
 
 
-  * To install those packages on CentOS 7, run:
+  * To install those packages on CentOS 7, run (one line at a time):
 
     ```
     su -
     yum install epel-release
     yum install cgnslib-devel
+    exit
     ```
 
 
@@ -59,7 +60,7 @@ Quick usage instructions:
   2. Checkout the right branch, e.g. for `OF5x`:
 
      ```
-     cd FluidStructureInteraction
+     cd cgnsToFromFoam
      git checkout OF5x
      ```
 
