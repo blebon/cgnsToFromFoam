@@ -65,10 +65,6 @@ namespace CGNSOO
 #define RealDouble CG_RealDouble
 #define Integer CG_Integer
 
-#define MODE_READ CG_MODE_READ
-#define MODE_WRITE CG_MODE_WRITE
-#define MODE_MODIFY CG_MODE_MODIFY
-
 #define Kilogram CG_Kilogram
 #define Meter CG_Meter
 #define Second CG_Second
@@ -121,6 +117,14 @@ namespace CGNSOO
 #define UserDefined CG_UserDefined
 #define Vertex CG_Vertex
 #endif
+
+// Always define these:
+#define MODE_READ CG_MODE_READ
+#define MODE_WRITE CG_MODE_WRITE
+#define MODE_MODIFY CG_MODE_MODIFY
+
+// -------------------
+
 
 typedef char cgnsstring[33]; //!< Representation of a text label in CGNS
 
