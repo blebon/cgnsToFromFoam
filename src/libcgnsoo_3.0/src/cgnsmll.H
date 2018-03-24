@@ -114,7 +114,6 @@ namespace CGNSOO
 #define IFaceCenter CG_IFaceCenter
 #define JFaceCenter CG_JFaceCenter
 #define KFaceCenter CG_KFaceCenter
-#define UserDefined CG_UserDefined
 #define Vertex CG_Vertex
 #endif
 
@@ -122,6 +121,8 @@ namespace CGNSOO
 #define MODE_READ CG_MODE_READ
 #define MODE_WRITE CG_MODE_WRITE
 #define MODE_MODIFY CG_MODE_MODIFY
+
+#define UserDefined CG_UserDefined
 
 // -------------------
 
