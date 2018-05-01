@@ -28,7 +28,7 @@ Therefore, beyond the usual requirements which are already needed for building O
   * To install those packages on Ubuntu 14.04 or newer, run:
 
     ```
-    sudo apt install libhdf5-dev libcgns-dev autoconf
+    sudo apt install libhdf5-dev libcgns-dev autoconf git
     ```
 
 
@@ -37,7 +37,7 @@ Therefore, beyond the usual requirements which are already needed for building O
     ```
     su -
     yum install epel-release
-    yum install cgnslib-devel
+    yum install cgnslib-devel git
     exit
     ```
 
