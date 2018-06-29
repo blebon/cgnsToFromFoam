@@ -75,6 +75,20 @@ namespace CGNSOO
 #define DataTypeUserDefined CG_DataTypeUserDefined
 #define MIXED CG_MIXED
 
+#define Dimensional CG_Dimensional
+#define GoverningEquationsNull CG_GoverningEquationsNull
+#define TwoEquation_JonesLaunder CG_TwoEquation_JonesLaunder
+
+#define NSLaminar CG_NSLaminar
+#define NSTurbulent CG_NSTurbulent
+#define NSTurbulentIncompressible CG_NSTurbulentIncompressible
+
+#define NonTimeAccurate CG_NonTimeAccurate
+#define TimeAccurate CG_TimeAccurate
+
+#define Abutting1to1 CG_Abutting1to1
+#define PointListDonor CG_PointListDonor
+
 
 #define BAR_2 CG_BAR_2
 #define BAR_3 CG_BAR_3
