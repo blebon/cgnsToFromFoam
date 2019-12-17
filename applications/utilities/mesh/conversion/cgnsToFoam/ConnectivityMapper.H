@@ -119,7 +119,7 @@ public:
     void merge( double mergeTolerance = 1.0e-1 );
 	
     // methods for inquiries
-    int  n_localToGlobal( int z, int localnodeid ) const;
+    foamNodeIndex  n_localToGlobal( int z, foamNodeIndex localnodeid ) const;
     int  c_localToGlobal( int z, int localcellid ) const;
     int  getTotalNodes() const { return g_n_nodes; }
     int  getTotalCells() const { return g_n_cells; }

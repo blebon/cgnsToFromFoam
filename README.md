@@ -8,7 +8,7 @@ That original repository is part of the TurboMachinery SIG, at http://openfoamwi
 
 All of the non-CGNS related files were removed, given that this repository focuses on porting CGNS to more recent OpenFOAM versions.
 
-For any problems with this fork, please report it here: https://github.com/wyldckat/cgnsToFromFoam/issues
+For any problems with this fork, please report it here: https://github.com/blebon/cgnsToFromFoam/issues
 
 
 Structure
@@ -54,6 +54,8 @@ Currently there are the following branches:
 
   * [OF5x](https://github.com/wyldckat/cgnsToFromFoam/tree/OF5x) - This branch
     will build with OpenFOAM 5.x
+  * [OF6](https://github.com/blebon/cgnsToFromFoam/tree/OF5x) - This branch
+    will build with OpenFOAM 6
 
 Quick usage instructions:
 

@@ -76,7 +76,7 @@ void CGNSBoundaryConditions::addPatchesFromElements( CGNSOO::BCType_t bctype  )
         // Convert CGNS indices to Foam indices using the zone mapper
         int k = 0;
         std::vector<foamNodeIndex> foam_point_list( bc_point_list.size() );
-        for ( std::vector<int>::iterator i  = bc_point_list.begin() ;
+        for ( std::vector<long int>::iterator i  = bc_point_list.begin() ;
               i != bc_point_list.end() ;
               i++ )
         {
